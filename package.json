@@ -1,0 +1,35 @@
+{
+  "name": "spase-model-tools-node",
+  "version": "1.0.0",
+  "description": "Tools to generate information model files.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Todd King",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/spase-group/spase-model-tools-node.git"
+  },
+  "bin": {
+    "spase-model-xsd": "./src/makexsd.js",
+    "spase-model-json": "./src/makejson.js",
+    "spase-model-pdf": "./src/makepdf/render.js"
+  },
+  "keywords": [
+    "SPASE",
+    "model",
+    "tools",
+    "xsd",
+    "json",
+    "pdf"
+  ],
+  "dependencies": {
+    "js-htmlencode": "^0.3.0",
+    "n-readlines": "^1.0.0",
+    "path": "^0.12.7",
+    "pdf-creator-node": "^1.4.1",
+    "yargs": "^15.3.1"
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "name": "pdf-builder",
+  "version": "1.0.0",
+  "description": "Generate PDF documents using jsreport.",
+  "main": "render.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Todd King",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "jsreport-assets": "^1.6.0",
+    "jsreport-child-templates": "^1.4.0",
+    "jsreport-chrome-pdf": "^1.8.0",
+    "jsreport-core": "^2.9.0",
+    "jsreport-debug": "^2.1.3",
+    "jsreport-handlebars": "^2.1.0",
+    "jsreport-pdf-utils": "^1.8.0",
+    "jsreport-scripts": "^2.5.0",
+    "jsreport-templates": "^2.4.0"
+  }
+}

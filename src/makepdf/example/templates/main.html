@@ -1,0 +1,25 @@
+<html>
+    <head>
+        <style>
+            {#asset ./css/main.css @encoding=utf8}
+        </style>
+    </head>
+    <body>
+<!-- 
+    we render TOC template twice
+    the first in the main template - this is needed for inner pdf links
+    the second time it is rendered as merge operation in pdf utils - this is needed to for gettign page numbers in TOC
+-->
+	{#child toc @template.recipe=html}
+	<div style='page-break-before: always;'></div>
+	<h1>Dictionary</h1>
+	{{#level chapters null}}
+		<div style='page-break-before: always;'></div>
+		<div class="chapter">
+			<h1 id="{{id}}">{{title}}</h1>
+			<!-- pdf utils page item is used for getting page numbers in TOC template -->
+			{{{pdfAddPageItem id=id}}}
+		</div>
+	{{/level}}
+	</body>
+</html>
