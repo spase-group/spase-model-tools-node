@@ -9,7 +9,6 @@ const fs = require('fs');
 const yargs = require('yargs');
 const path = require('path');
 const lineByLine = require('n-readlines');
-const Model = require('./model.js');
 const htmlEncode = require('js-htmlencode').htmlEncode;
 
 var options  = yargs
@@ -251,6 +250,9 @@ function makeBranch(model, term, addLang) {
 			currentGroup = member.group;
 		}
 		var type = member.element;
+		if( ! model.dictionary[member.element]) {
+			console.log("Definition of '" + member.element + "' missing from dictionary.");
+		}
 		if(model.dictionary[member.element].type == 'Enumeration') {
 			type = model.dictionary[member.element].list;
 		}

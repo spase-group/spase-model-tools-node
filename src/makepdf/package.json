@@ -1,5 +1,5 @@
 {
-  "name": "pdf-builder",
+  "name": "makepdf",
   "version": "1.0.0",
   "description": "Generate PDF documents using jsreport.",
   "main": "render.js",
@@ -9,6 +9,7 @@
   "author": "Todd King",
   "license": "Apache-2.0",
   "dependencies": {
+    "handlebars": "^4.7.6",
     "jsreport-assets": "^1.6.0",
     "jsreport-child-templates": "^1.4.0",
     "jsreport-chrome-pdf": "^1.8.0",
@@ -17,6 +18,8 @@
     "jsreport-handlebars": "^2.1.0",
     "jsreport-pdf-utils": "^1.8.0",
     "jsreport-scripts": "^2.5.0",
-    "jsreport-templates": "^2.4.0"
+    "jsreport-templates": "^2.4.0",
+    "puppeteer": "^5.3.1",
+    "webpack": "^4.44.2"
   }
 }

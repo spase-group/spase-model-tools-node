@@ -6,6 +6,7 @@ const loader = require('./loader.js');
 
 const jsreport = require('jsreport-core')({
 	"allowLocalFilesAccess": true,
+	"rootDirectory": process.cwd(),
 	"template": {
 		"chrome": {
 		  "marginTop": "50px",
@@ -56,6 +57,14 @@ var options  = yargs
 		'h' : {
 			alias : 'help',
 			description: 'show information about the app.'
+		},
+		
+		// Base folder
+		'b' : {
+			alias: 'base',
+			describe : 'Base folder containg config, data, outline  file.',
+			type: 'string',
+			default: 'spec'
 		},
 		
 		// Config
@@ -161,8 +170,8 @@ var args = options._;	// Unprocessed command line arguments
 
 const data = JSON.parse(fs.readFileSync(options.data, 'utf8'));
 const outline = JSON.parse(fs.readFileSync(options.outline, 'utf8'));
-const helpers = loader.loadAll(options.helpers, ".js");
 const templates = loader.loadFile(options.template);
+const helpers = loader.loadAll(options.helpers, ".js");
 const header = '<html><head><style>html, body { font-size:12px;}</style></head><body><div style="text-align:center; width: 100%; margin-left: ' + options.margin + '; margin-right: ' + options.margin + ';"><span class="title"></span></div></body></html>';
 if(options.header) { header = loader.loadFile(options.header); }
 const footer = '<html><head><style>html, body { font-size:12px;}</style></head><body><div style="text-align:right; width:100%; margin-left: ' + options.margin + '; margin-right: ' + options.margin + ';"><span class="pageNumber"></span></div></body></html>';

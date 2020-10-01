@@ -56,7 +56,7 @@ function buildTreeArray(ont, name, occurrence) {
 // Build a tree of nested arrays
 function buildTree(ont, name, occurrence, prefix) {
 	var set = [];
-	set.push(prefix + " " + name + " (" + occurrence + ")");
+	set.push( { prefix: prefix, name: name, occurrence: occurrence } );
 	
 	if(ont[name]) {	// Build up children
 		var list = ont[name];
