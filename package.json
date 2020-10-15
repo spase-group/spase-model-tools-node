@@ -1,7 +1,7 @@
 {
   "name": "spase-model-tools-node",
   "version": "1.0.0",
-  "description": "Tools to generate information model files.",
+  "description": "Tools to generate information model PDF, JSON and XSD files.",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -15,7 +15,7 @@
   "bin": {
     "spase-model-xsd": "./src/makexsd.js",
     "spase-model-json": "./src/makejson.js",
-    "spase-model-pdf": "./src/makepdf/render.js"
+    "spase-model-pdf": "./src/makepdf.js"
   },
   "keywords": [
     "SPASE",
@@ -26,10 +26,22 @@
     "pdf"
   ],
   "dependencies": {
+    "handlebars": "^4.7.6",
     "js-htmlencode": "^0.3.0",
+    "jsreport-assets": "^1.6.0",
+    "jsreport-child-templates": "^1.4.0",
+    "jsreport-chrome-pdf": "^1.8.0",
+    "jsreport-core": "^2.9.0",
+    "jsreport-debug": "^2.1.3",
+    "jsreport-handlebars": "^2.1.0",
+    "jsreport-pdf-utils": "^1.8.0",
+    "jsreport-scripts": "^2.5.0",
+    "jsreport-templates": "^2.4.0",
     "n-readlines": "^1.0.0",
     "path": "^0.12.7",
     "pdf-creator-node": "^1.4.1",
+    "puppeteer": "^5.3.1",
+    "webpack": "^4.44.2",
     "yargs": "^15.3.1"
   }
 }

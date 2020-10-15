@@ -33,6 +33,8 @@ const jsreport = require('jsreport-core')({
 		}
 	},
 });
+jsreport.use(require('jsreport-handlebars')());
+jsreport.use(require('jsreport-chrome-pdf')());
 
 var options  = yargs
 	.version('1.0.0')
