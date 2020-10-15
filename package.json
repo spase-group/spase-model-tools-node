@@ -1,6 +1,6 @@
 {
-  "name": "spase-model-tools-node",
-  "version": "1.0.0",
+  "name": "spase-model-tools",
+  "version": "0.0.0",
   "description": "Tools to generate information model PDF, JSON and XSD files.",
   "main": "index.js",
   "scripts": {

@@ -4,7 +4,7 @@ A collection of command line tools for working with SPASE information model spec
 
 ## Installation
 
-`npm install spase-model-tools-node -g`
+`npm install spase-model-tools -g`
 
 ## Tools
 
