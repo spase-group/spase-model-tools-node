@@ -240,7 +240,7 @@ function readHistory(pathname) {
 							"updated": part[2],
 							"changedBy": part[3],
 							"description": part[4],
-							"node": part[5]
+							"note": part[5]
 						};
 		dictionary.push(definition);
 	}

@@ -1,7 +1,7 @@
 {
    "name": "SPASE Base Model",
    "version": "2.3.2",
-   "released": "2020-10-01",
+   "released": "2020-10-15",
    "description": "SPASE Base Model",
    "namespace": "spase",
    "schemaurl": "https://spase-group.org/data/schema",
@@ -2408,12 +2408,28 @@
          "node": "Decided during the telecon on 2020-08-06."
       },
       {
-         "id": "300",
+         "id": "301",
          "version": "2.3.2",
          "updated": "2020-09-30",
          "changedBy": "T.King",
          "description": "Add InstrumentGroupID and Experiment to dictionary; Add InstrumentGroupID to Instrument and Experiment to InstrumentType.",
          "node": "Decided during the telecon on 2020-09-24."
+      },
+      {
+         "id": "302",
+         "version": "2.3.2",
+         "updated": "2020-10-08",
+         "changedBy": "T.King",
+         "description": "Add InstrumentLead to dictionary and to Role.",
+         "node": "Decided during the telecon on 2020-10-08."
+      },
+      {
+         "id": "303",
+         "version": "2.3.2",
+         "updated": "2015-09-09",
+         "changedBy": "T.King",
+         "description": "Released.",
+         "node": "Decided during the telecon on 2020-10-15."
       }
    ],
    "type": {
@@ -6456,6 +6472,18 @@
          ],
          "allowedValues": []
       },
+      "InstrumentLead": {
+         "version": "2.3.2",
+         "since": "2.3.2",
+         "term": "InstrumentLead",
+         "type": "Item",
+         "list": "",
+         "element": "",
+         "attributes": "",
+         "definition": "An individual who is the designated leader of an instrument or intrument package.\r",
+         "usedBy": [],
+         "allowedValues": []
+      },
       "InstrumentMode": {
          "version": "2.3.2",
          "since": "2.0.2",
@@ -8742,7 +8770,7 @@
          "list": "",
          "element": "",
          "attributes": "",
-         "definition": "The Planetary Data System, version 4 (PDS4) standard provides guidelines on how a data producer should construct a data set suitable for long-term archiving. The standard contains a number of requirements in terms of dataset structure and documentation that should allow for any PDS compliant data set to be used and understood in the long term. Each PDS4 bundle consists of two files, one containing the data and the other an eXtensible Markup Language (XML) file containing the label. PDS4 recognises four \u0011base' data structures, array, table, parsable byte stream and encoded byte stream with arrays and tables most commonly in use. The PDS4 standard is described at: https://pds.jpl.nasa.gov/datastandards/documents/current-version.shtml. The PDS4 archiving standard has been required for data archives from NASA-funded planetary missions and for small data archives since 2011.\r",
+         "definition": "The Planetary Data System, version 4 (PDS4) standard provides guidelines on how a data producer should construct a data set suitable for long-term archiving. The standard contains a number of requirements in terms of dataset structure and documentation that should allow for any PDS compliant data set to be used and understood in the long term. Each PDS4 bundle consists of two files, one containing the data and the other an eXtensible Markup Language (XML) file containing the label. PDS4 recognises four base data structures, array, table, parsable byte stream and encoded byte stream with arrays and tables most commonly in use. The PDS4 standard is described at: https://pds.jpl.nasa.gov/datastandards/documents/current-version.shtml. The PDS4 archiving standard has been required for data archives from NASA-funded planetary missions and for small data archives since 2011.\r",
          "usedBy": [],
          "allowedValues": []
       },
@@ -10297,6 +10325,7 @@
             "FormerPI",
             "GeneralContact",
             "HostContact",
+            "InstrumentLead",
             "MetadataContact",
             "MissionManager",
             "MissionPrincipalInvestigator",
@@ -15520,6 +15549,12 @@
             "since": "2.3.1",
             "list": "Role",
             "item": "HostContact"
+         },
+         "InstrumentLead": {
+            "version": "2.3.2",
+            "since": "2.3.2",
+            "list": "Role",
+            "item": "InstrumentLead"
          },
          "MetadataContact": {
             "version": "2.3.2",

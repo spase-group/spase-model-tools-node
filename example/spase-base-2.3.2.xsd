@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Automatically created based on the specification available at http://www.spase-group.org/model -->
 <!-- Version: 2.3.2 -->
-<!-- Generated: 2020-10-01 -->
+<!-- Generated: 2020-10-14 -->
 <xsd:schema
 	      targetNamespace="https://spase-group.org/data/schema"
 	      xmlns:xsd="http://www.w3.org/2001/XMLSchema"
@@ -2958,7 +2958,7 @@
             <xsd:enumeration value="PDS4">
                <xsd:annotation>
                   <xsd:documentation xml:lang="en">
-                  The Planetary Data System, version 4 (PDS4) standard provides guidelines on how a data producer should construct a data set suitable for long-term archiving. The standard contains a number of requirements in terms of dataset structure and documentation that should allow for any PDS compliant data set to be used and understood in the long term. Each PDS4 bundle consists of two files, one containing the data and the other an eXtensible Markup Language (XML) file containing the label. PDS4 recognises four base&#39; data structures, array, table, parsable byte stream and encoded byte stream with arrays and tables most commonly in use. The PDS4 standard is described at: https://pds.jpl.nasa.gov/datastandards/documents/current-version.shtml. The PDS4 archiving standard has been required for data archives from NASA-funded planetary missions and for small data archives since 2011.
+                  The Planetary Data System, version 4 (PDS4) standard provides guidelines on how a data producer should construct a data set suitable for long-term archiving. The standard contains a number of requirements in terms of dataset structure and documentation that should allow for any PDS compliant data set to be used and understood in the long term. Each PDS4 bundle consists of two files, one containing the data and the other an eXtensible Markup Language (XML) file containing the label. PDS4 recognises four base data structures, array, table, parsable byte stream and encoded byte stream with arrays and tables most commonly in use. The PDS4 standard is described at: https://pds.jpl.nasa.gov/datastandards/documents/current-version.shtml. The PDS4 archiving standard has been required for data archives from NASA-funded planetary missions and for small data archives since 2011.
                   </xsd:documentation>
                </xsd:annotation>
             </xsd:enumeration>
@@ -6529,6 +6529,13 @@
                <xsd:annotation>
                   <xsd:documentation xml:lang="en">
                   An individual who can provide specific information with regard the hosting of a resource or supporting software.
+                  </xsd:documentation>
+               </xsd:annotation>
+            </xsd:enumeration>
+            <xsd:enumeration value="InstrumentLead">
+               <xsd:annotation>
+                  <xsd:documentation xml:lang="en">
+                  An individual who is the designated leader of an instrument or intrument package.
                   </xsd:documentation>
                </xsd:annotation>
             </xsd:enumeration>

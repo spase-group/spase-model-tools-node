@@ -33,8 +33,15 @@ const jsreport = require('jsreport-core')({
 		}
 	},
 });
+
+// Necessary modules
 jsreport.use(require('jsreport-handlebars')());
 jsreport.use(require('jsreport-chrome-pdf')());
+jsreport.use(require('jsreport-assets')());
+jsreport.use(require('jsreport-templates')());
+jsreport.use(require('jsreport-child-templates')());
+jsreport.use(require('jsreport-pdf-utils')());
+jsreport.use(require('jsreport-scripts')());
 
 var options  = yargs
 	.version('1.0.0')
@@ -64,9 +71,9 @@ var options  = yargs
 		// Base folder
 		'b' : {
 			alias: 'base',
-			describe : 'Base folder containg config, data, outline  file.',
+			describe : 'Base folder containg config, data, outline file.',
 			type: 'string',
-			default: 'spec'
+			default: '.'
 		},
 		
 		// Config
@@ -170,28 +177,25 @@ var options  = yargs
 
 var args = options._;	// Unprocessed command line arguments
 
-const data = JSON.parse(fs.readFileSync(options.data, 'utf8'));
-const outline = JSON.parse(fs.readFileSync(options.outline, 'utf8'));
-const templates = loader.loadFile(options.template);
-const helpers = loader.loadAll(options.helpers, ".js");
+const data = JSON.parse(fs.readFileSync(path.join(options.base, options.data), 'utf8'));
+const outline = JSON.parse(fs.readFileSync(path.join(options.base, options.outline), 'utf8'));
+const templates = loader.loadFile(path.join(options.base, options.template));
+const helpers = loader.loadAll(path.join(options.base, options.helpers), ".js");
 const header = '<html><head><style>html, body { font-size:12px;}</style></head><body><div style="text-align:center; width: 100%; margin-left: ' + options.margin + '; margin-right: ' + options.margin + ';"><span class="title"></span></div></body></html>';
-if(options.header) { header = loader.loadFile(options.header); }
+if(options.header) { header = loader.loadFile(path.join(options.base, options.header)); }
 const footer = '<html><head><style>html, body { font-size:12px;}</style></head><body><div style="text-align:right; width:100%; margin-left: ' + options.margin + '; margin-right: ' + options.margin + ';"><span class="pageNumber"></span></div></body></html>';
-if(options.footer) { footer = loader.loadFile(options.footer); }
+if(options.footer) { footer = loader.loadFile(path.join(options.base, options.footer)); }
 
-// Build up configured scripts context
+const scripts = loader.loadAll(path.join(options.base, options.scripts), ".js");
+/*
 var scripts = ' \
 const fs = require("fs"); \
 const jsreport = require("jsreport-proxy"); \
 const loader = require("loader.js"); \
-const helpers = loader.loadAll("' + options.helpers + '", ".js"); \
-const scripts = loader.loadAll("' + options.scripts + '", ".js"); \
-const coverPage = loader.loadFile("' + options.cover + '", "utf8"); \
-const toc = loader.loadFile("' + options.toc + '", "utf8"); \
+const helpers = loader.loadAll("' + path.join(options.base, options.helpers) + '", ".js"); \
+const scripts = loader.loadAll("' + path.join(options.base, options.scripts) + '", ".js"); \
 '
-
-// Add any locel scripts
-scripts += loader.loadAll(options.scripts, ".js");
+*/
 
 // Set-up logging
 if(options.verbose) {

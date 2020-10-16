@@ -12,10 +12,10 @@ const lineByLine = require('n-readlines');
 const htmlEncode = require('js-htmlencode').htmlEncode;
 
 var options  = yargs
-	.version('1.0.0')
+	.version('1.0.1')
     .usage('Read information model specification file in JSON format and generate an XML schema document (XSD).')
 	.usage('$0 [args] <folder>')
-	.example('$0 example.json', 'Read the information model specification file "example.json"')
+	.example('$0 -d example.json', 'Read the information model specification file "example.json"')
 	.epilog('copyright 2020')
 	.showHelpOnFail(false, "Specify --help for available options")
 	.help('h')
@@ -73,20 +73,12 @@ var options  = yargs
 var args = options._;	// Unprocessed command line arguments
 var outputFile = null;	// None defined.
 
-// If no files or options show help
-if (args.length == 0) {
-  yargs.showHelp();
-  return;
-}
-
 // Output
 if(options.output) {
 	outputFile = fs.createWriteStream(options.output);
 }
 
-var spec = args[0];
-
-var model = readModelSpec(spec);
+var model = readModelSpec(options.data);
 
 // outputWrite(0, "Base: " + options.base);
 
