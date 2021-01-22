@@ -3,48 +3,10 @@ const path = require('path');
 const yargs = require('yargs');
 const winston = require('winston');
 const loader = require('./loader.js');
-
-const jsreport = require('jsreport-core')({
-	"allowLocalFilesAccess": true,
-	"rootDirectory": process.cwd(),
-	"template": {
-		"chrome": {
-		  "marginTop": "50px",
-		  "marginBottom": "50px",
-		  "headerTemplate": '<html><head><style>html, body { font-size:12px;}</style></head><body><div style="text-align:center; width: 100%"><span class="title"></span></div></body></html>',
-		  "footerTemplate": '<html><head><style>html, body { font-size:12px;}</style></head><body><div style="text-align:center; width:100%"><span class="pageNumber"></span></div></body></html>',
-		  "displayHeaderFooter": true,
-		},
-	},
-	"extensions": {
-		"assets": {
-			"allowedFiles": "**/*.*",
-			"searchOnDiskIfNotFoundInStore": true
-		},
-	},
-	"child-templates": {
-		// controls how many child templates rendering can happen in parallel, defaults to 2
-		"parallelLimit": 5
-	},
-	"logger": {
-		"error": {
-			"transport": "console",
-			"level": "error",
-		}
-	},
-});
-
-// Necessary modules
-jsreport.use(require('jsreport-handlebars')());
-jsreport.use(require('jsreport-chrome-pdf')());
-jsreport.use(require('jsreport-assets')());
-jsreport.use(require('jsreport-templates')());
-jsreport.use(require('jsreport-child-templates')());
-jsreport.use(require('jsreport-pdf-utils')());
-jsreport.use(require('jsreport-scripts')());
+const process = require('process'); 
 
 var options  = yargs
-	.version('1.0.0')
+	.version('1.0.1')
     .usage('Read information model specification files and generate PDF documentation.')
 	.usage('$0 [args] <folder>')
 	.example('$0 example', 'Read the information model specification files in the folder "example"')
@@ -177,6 +139,63 @@ var options  = yargs
 
 var args = options._;	// Unprocessed command line arguments
 
+// Set working directory
+process.chdir(options.base);
+console.log("Current directory: " + process.cwd());
+
+// Initialize jsreport
+const jsreport = require('jsreport-core')({
+	"allowLocalFilesAccess": true,
+	"rootDirectory": process.cwd(),
+	"template": {
+		"chrome": {
+		  "marginTop": "50px",
+		  "marginBottom": "50px",
+		  "headerTemplate": '<html><head><style>html, body { font-size:12px;}</style></head><body><div style="text-align:center; width: 100%"><span class="title"></span></div></body></html>',
+		  "footerTemplate": '<html><head><style>html, body { font-size:12px;}</style></head><body><div style="text-align:center; width:100%"><span class="pageNumber"></span></div></body></html>',
+		  "displayHeaderFooter": true,
+		},
+	},
+	"extensions": {
+		"assets": {
+			"allowedFiles": "**/*.*",
+			"searchOnDiskIfNotFoundInStore": true
+		},
+	},
+	"child-templates": {
+		// controls how many child templates rendering can happen in parallel, defaults to 2
+		"parallelLimit": 5
+	},
+	"logger": {
+		"error": {
+			"transport": "console",
+			"level": "error",
+		}
+	},
+});
+
+// Necessary modules
+jsreport.use(require('jsreport-handlebars')());
+jsreport.use(require('jsreport-chrome-pdf')());
+jsreport.use(require('jsreport-assets')());
+jsreport.use(require('jsreport-templates')());
+jsreport.use(require('jsreport-child-templates')());
+jsreport.use(require('jsreport-pdf-utils')());
+jsreport.use(require('jsreport-scripts')());
+
+// Load various pieces
+
+const data = JSON.parse(fs.readFileSync(options.data, 'utf8'));
+const outline = JSON.parse(fs.readFileSync(options.outline, 'utf8'));
+const templates = loader.loadFile(options.template);
+const helpers = loader.loadAll(options.helpers, ".js");
+const header = '<html><head><style>html, body { font-size:12px;}</style></head><body><div style="text-align:center; width: 100%; margin-left: ' + options.margin + '; margin-right: ' + options.margin + ';"><span class="title"></span></div></body></html>';
+if(options.header) { header = loader.loadFile(options.header); }
+const footer = '<html><head><style>html, body { font-size:12px;}</style></head><body><div style="text-align:right; width:100%; margin-left: ' + options.margin + '; margin-right: ' + options.margin + ';"><span class="pageNumber"></span></div></body></html>';
+if(options.footer) { footer = loader.loadFile(options.footer); }
+
+const scripts = loader.loadAll(options.scripts, ".js");
+/*
 const data = JSON.parse(fs.readFileSync(path.join(options.base, options.data), 'utf8'));
 const outline = JSON.parse(fs.readFileSync(path.join(options.base, options.outline), 'utf8'));
 const templates = loader.loadFile(path.join(options.base, options.template));
@@ -187,6 +206,7 @@ const footer = '<html><head><style>html, body { font-size:12px;}</style></head><
 if(options.footer) { footer = loader.loadFile(path.join(options.base, options.footer)); }
 
 const scripts = loader.loadAll(path.join(options.base, options.scripts), ".js");
+*/
 /*
 var scripts = ' \
 const fs = require("fs"); \

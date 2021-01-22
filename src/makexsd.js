@@ -208,9 +208,14 @@ function makeBranch(model, term, addLang) {
 	if(item['_written']) return; // Don't write twice
 	item['_written'] = true;
 
-	outputWrite(1, "<xsd:complexType name=\"" + getXSLName(term) + "\">");
-	addAnnotation(2, model.dictionary[term].definition);
-	outputWrite(2, "<xsd:sequence>");
+	try {
+		outputWrite(1, "<xsd:complexType name=\"" + getXSLName(term) + "\">");
+		addAnnotation(2, model.dictionary[term].definition);
+		outputWrite(2, "<xsd:sequence>");
+	} catch(e) {
+		console.log("Processing term: " + term);
+		console.log(e.message);
+	}
 
 	var currentGroup = "";
 	var inc = 0;
@@ -280,17 +285,25 @@ function makeBranch(model, term, addLang) {
 
 function makeExtension(model, addLang) {
 	var term = 'Extension';
-	
-	outputWrite(0, "");
-	outputWrite(1, "<xsd:complexType name=\"" + getXSLName(term) + "\">");
-	addAnnotation(2, model.dictionary[term].definition);
-	outputWrite(2, "<xsd:sequence>");
-	outputWrite(3, "<xsd:any minOccurs=\"0\" maxOccurs=\"unbounded\" processContents=\"lax\" namespace=\"##other\" />");
-	outputWrite(2, "</xsd:sequence>");
-	if (addLang) {
-		outputWrite(3, "<xsd:attribute name=\"lang\" type=\"xsd:string\" default=\"en\"/>");
+
+	try {	
+		outputWrite(0, "");
+		outputWrite(1, "<xsd:complexType name=\"" + getXSLName(term) + "\">");
+		addAnnotation(2, model.dictionary[term].definition);
+		outputWrite(2, "<xsd:sequence>");
+		outputWrite(3, "<xsd:any minOccurs=\"0\" maxOccurs=\"unbounded\" processContents=\"lax\" namespace=\"##other\" />");
+		outputWrite(2, "</xsd:sequence>");
+		if (addLang) {
+			outputWrite(3, "<xsd:attribute name=\"lang\" type=\"xsd:string\" default=\"en\"/>");
+		}
+		outputWrite(1, "</xsd:complexType>");
+	} catch(e) {
+		// "Extension" was introduced in 1.2.0 - Ignore error if 1.1.0
+		if(model.version.localeCompare("1.1.0") != 0) {
+			console.log("Processing term: " + term);
+			console.log(e.message);
+		}
 	}
-	outputWrite(1, "</xsd:complexType>");
 }
 
 function makeGroup(model) {
@@ -476,29 +489,33 @@ function makeTypes(model) {
 
 	if(options.verbose) console.log("   Type: Sequence");
 
-	outputWrite(1, "<xsd:simpleType name=\"typeSequence\">");
-	outputWrite(2, "<xsd:annotation>");
-	outputWrite(3, "<xsd:documentation xml:lang=\"en\">");
-	addAnnotation(4, model.type["Sequence"].definition);
-	outputWrite(3, "</xsd:documentation>");
-	outputWrite(2, "</xsd:annotation>");
-	outputWrite(2, "<xsd:list itemType=\"xsd:integer\"/>");
-	outputWrite(1, "</xsd:simpleType>");
+	if(model.type["Sequence"]) {	// Introduced in version 1.2.0
+		outputWrite(1, "<xsd:simpleType name=\"typeSequence\">");
+		outputWrite(2, "<xsd:annotation>");
+		outputWrite(3, "<xsd:documentation xml:lang=\"en\">");
+		addAnnotation(4, model.type["Sequence"].definition);
+		outputWrite(3, "</xsd:documentation>");
+		outputWrite(2, "</xsd:annotation>");
+		outputWrite(2, "<xsd:list itemType=\"xsd:integer\"/>");
+		outputWrite(1, "</xsd:simpleType>");
+	}
 
 	outputWrite(0, "");
 	
 	if(options.verbose) console.log("   Type: ID");
 	
-	outputWrite(1, "<xsd:simpleType name=\"typeID\">");
-	outputWrite(2, "<xsd:annotation>");
-	outputWrite(3, "<xsd:documentation xml:lang=\"en\">");
-	addAnnotation(4, model.type["ID"].definition);
-	outputWrite(3, "</xsd:documentation>");
-	outputWrite(2, "</xsd:annotation>");
-	outputWrite(2, "<xsd:restriction base=\"xsd:string\">");
-	outputWrite(3, "<xsd:pattern value=\"[^:]+://[^/]+/.+\"/>");
-	outputWrite(2, "</xsd:restriction>");
-	outputWrite(1, "</xsd:simpleType>");
+	if(model.type["ID"]) {	// Introduced in version 2.2.3
+		outputWrite(1, "<xsd:simpleType name=\"typeID\">");
+		outputWrite(2, "<xsd:annotation>");
+		outputWrite(3, "<xsd:documentation xml:lang=\"en\">");
+		addAnnotation(4, model.type["ID"].definition);
+		outputWrite(3, "</xsd:documentation>");
+		outputWrite(2, "</xsd:annotation>");
+		outputWrite(2, "<xsd:restriction base=\"xsd:string\">");
+		outputWrite(3, "<xsd:pattern value=\"[^:]+://[^/]+/.+\"/>");
+		outputWrite(2, "</xsd:restriction>");
+		outputWrite(1, "</xsd:simpleType>");
+	}
 
 }
 
@@ -533,20 +550,30 @@ function defineType(model, name) {
  **/
 function makeEnum(indent, model, prefix, list) {
 	var buffer = "";
+	if( ! model.member[list]) {
+		console.log("List '" + list + "' has no members defined.");
+		return;
+	}
 	
-	var keys = Object.keys(model.member[list]);
-	for (var i = 0; i < keys.length; i++) {
-		var term = keys[i];
-		buffer = prefix;
-		if (prefix.length > 0) buffer += prefix + ".";
-		buffer += getXSLName(term);
-		outputWrite(indent + 1, "<xsd:enumeration value=\"" + buffer + "\">");
-		if( ! model.dictionary[term]) console.log("Error in list '" + list + "' - member '" + term +"' is not defined.");
-		addAnnotation(indent + 2, model.dictionary[term].definition);
-		outputWrite(indent + 1, "</xsd:enumeration>");
-		if (model.member[term])	{	// Nested Enumeration
-			makeEnum(indent + 1, model, buffer, term);
+	try {
+		var keys = Object.keys(model.member[list]);
+		var term = "";
+		for (var i = 0; i < keys.length; i++) {
+			term = keys[i];
+			buffer = prefix;
+			if (prefix.length > 0) buffer += prefix + ".";
+			buffer += getXSLName(term);
+			outputWrite(indent + 1, "<xsd:enumeration value=\"" + buffer + "\">");
+			if( ! model.dictionary[term]) console.log("Error in list '" + list + "' - member '" + term +"' is not defined.");
+			addAnnotation(indent + 2, model.dictionary[term].definition);
+			outputWrite(indent + 1, "</xsd:enumeration>");
+			if (model.member[term])	{	// Nested Enumeration
+				makeEnum(indent + 1, model, buffer, term);
+			}
 		}
+	} catch(e) {
+		console.log("Processing term '" + term + "' in list '" + list + "'");
+		console.log(e.message);
 	}
 }
 

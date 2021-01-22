@@ -9,10 +9,15 @@ function beforeRender (req, res) {
 }
 
 async function afterRender(req, res) {
+	const toc = loader.loadFile(req.data.options.toc, "utf8");
+	const coverPage = loader.loadFile(req.data.options.cover, "utf8");
+	const helpers = loader.loadAll(req.data.options.helpers, ".js"); 
+	/*
 	const toc = loader.loadFile(path.join(req.data.options.base, req.data.options.toc), "utf8");
 	const coverPage = loader.loadFile(path.join(req.data.options.base, req.data.options.cover), "utf8");
 	const helpers = loader.loadAll(path.join(req.data.options.base, req.data.options.helpers), ".js"); 
-
+	*/
+	
 	console.log("afterRender(): initialize");
 	
     // after rendering with some pdf recipe we can use .parse to read the text in the pdf

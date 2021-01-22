@@ -11,7 +11,7 @@ const path = require('path');
 const lineByLine = require('n-readlines');
 
 var options  = yargs
-	.version('1.0.0')
+	.version('1.0.1')
     .usage('Read information model specification files and generate corresponding JSON files.')
 	.usage('$0 [args] <folder>')
 	.example('$0 example', 'Read the information model specification files in the folder "example"')
@@ -43,6 +43,14 @@ var options  = yargs
 			default: 'config.json'
 		},
 		
+		// Base folder
+		'b' : {
+			alias: 'base',
+			describe : 'Base folder containg config, data, outline file.',
+			type: 'string',
+			default: '.'
+		},
+				
 		// Name
 		'n' : {
 			alias: 'name',
@@ -113,6 +121,17 @@ var options  = yargs
 
 var args = options._;	// Unprocessed command line arguments
 var outputFile = null;	// None defined.
+
+// Today's date with zero padding in month and day
+function now() {
+	var today = new Date();
+	var dd = String(today.getDate()).padStart(2, '0');
+	var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+	var yyyy = today.getFullYear();
+
+	today = yyyy + '-' + mm + '-' + dd;
+	return(today);
+}
 
 /** 
  * Write to output file if defined, otherwise to console.log()
@@ -322,6 +341,27 @@ function readOntology(pathname) {
 	return dictionary;	
 }
 
+function buildEnumeration(dictionary, member, prefix, list) {
+	var names = [];
+	
+	if( ! list) return names;
+	
+	var keys = Object.keys(list);
+	for (var i = 0; i < keys.length; i++) {
+		var term = keys[i];
+		if( ! dictionary[term]) {
+			console.log("Reference error: Term '" + term + "' is not defined.");
+		} else {
+			names.push(prefix + term);
+			var nested = buildEnumeration(dictionary, member, prefix + term + ".", member[term]);
+			for( var j = 0; j < nested.length; j++) {
+				names.push(nested[j]);
+			}
+		}
+	}
+	return names;
+}
+
 /**
  *  @brief Perform task.
  *  
@@ -329,12 +369,10 @@ function readOntology(pathname) {
  *  @return nothing
  */
 function main(args) {
-	// If no files or options show help
-	if (args.length == 0) {
-	  yargs.showHelp();
-	  return;
-	}
 
+	// Change to base folder
+	process.chdir(options.base);
+	
 	// Output
 	if(options.output) {
 		outputFile = fs.createWriteStream(options.output);
@@ -357,15 +395,15 @@ function main(args) {
 		"ontology" : {}
 	}
 	
-	var root = args[0];
+	// var root = options.base; // args[0];
 
 	// Read and parse config file (if it exists)
 	if(options.config) {
-		var pathname = path.join(root, options.config);
+		var pathname = options.config;
 		if( fs.existsSync(pathname) ) {
 			var config = readConfig(pathname);
 			if(config.name) { model.name = config.name; }
-			if(config.number) { model.version = config.number; }
+			if(config.version) { model.version = config.version; }
 			if(config.released) { model.released = config.released; }
 			if(config.description) { model.description = config.description; }
 			if(config.namespace) { model.namespace = config.namespace; }
@@ -379,7 +417,7 @@ function main(args) {
 	}
 	
 	// Read and parse type info
-	var type = readType(path.join(root, "type.tab"));
+	var type = readType("type.tab");
 /*
 	console.log("#----- Type ----")
 	console.log(JSON.stringify(type, null, 3));
@@ -387,7 +425,7 @@ function main(args) {
 */
 
 	// Read and parse dictionary
-	var dictionary = readDictionary(path.join(root, "dictionary.tab"));
+	var dictionary = readDictionary("dictionary.tab");
 /*
 	console.log("#----- Dictionary ----")
 	console.log(JSON.stringify(dictionary, null, 3));
@@ -395,7 +433,7 @@ function main(args) {
 */
 	
 	// Read and parse list info
-	var list = readList(path.join(root, "list.tab"));
+	var list = readList("list.tab");
 /*
 	console.log("#----- List ----")
 	console.log(JSON.stringify(list, null, 3));
@@ -403,7 +441,7 @@ function main(args) {
 */
 
 	// Read and parse member info
-	var member = readMember(path.join(root, "member.tab"));
+	var member = readMember("member.tab");
 /*
 	console.log("#----- Member ----")
 	console.log(JSON.stringify(member, null, 3));
@@ -411,7 +449,7 @@ function main(args) {
 */
 
 	// Read and parse history info
-	var history = readHistory(path.join(root, "history.tab"));
+	var history = readHistory("history.tab");
 /*
 	console.log("#----- History ----")
 	console.log(JSON.stringify(history, null, 3));
@@ -419,7 +457,7 @@ function main(args) {
 */
 
 	// Read and parse ontology
-	var ontology = readOntology(path.join(root, "ontology.tab"));
+	var ontology = readOntology("ontology.tab");
 /*
 	console.log("#----- Ontology ----")
 	console.log(JSON.stringify(ontology, null, 3));
@@ -453,7 +491,7 @@ function main(args) {
 			if( ! member[dictionary[term].list]) {
 				console.log("Reference error: Term '" + term + "' refers to list '" + dictionary[term].list + "' which does not exist.");
 			} else {
-				dictionary[term].allowedValues = Object.keys(member[dictionary[term].list]) ;
+				dictionary[term].allowedValues = buildEnumeration(dictionary, member, "", member[dictionary[term].list]); // Object.keys(member[dictionary[term].list]);
 			}
 		}
 	}
@@ -483,6 +521,9 @@ function main(args) {
 	if(options.namespace) { model.namespace = options.namespace; }
 	if(options.schemaurl) { model.schemaurl = options.schemaurl; }
 	if(options.extend) { model.extend = options.extend; }
+
+	// Default release date = today
+	if(model.released.length == 0) model.released = now();
 
 	// Define elements
 	model.history = history;
