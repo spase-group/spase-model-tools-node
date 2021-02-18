@@ -561,7 +561,7 @@ function makeEnum(indent, model, prefix, list) {
 		for (var i = 0; i < keys.length; i++) {
 			term = keys[i];
 			buffer = prefix;
-			if (prefix.length > 0) buffer += prefix + ".";
+			if (prefix.length > 0) buffer += ".";
 			buffer += getXSLName(term);
 			outputWrite(indent + 1, "<xsd:enumeration value=\"" + buffer + "\">");
 			if( ! model.dictionary[term]) console.log("Error in list '" + list + "' - member '" + term +"' is not defined.");
