@@ -165,7 +165,7 @@ function makeXSD(model) {
 		outputWrite(0, "");
 	} 
 	
-	makeTree(model, "Spase", "", true);
+	makeTree(model, "Spase", true);
 	makeGroup(model);
 	makeDictionary(model);
 	makeLists(1, model);
@@ -279,27 +279,27 @@ function makeBranch(model, term, addLang) {
 	// Now output complexTypes used by this object
 	for (var i = 0; i < keys.length; i++) {
 		var key = keys[i];
-		if(model.ontology[key]) makeBranch(model, key, addLang);
+		if(model.ontology[key]) makeBranch(model, key, false); // We don't automatically add "lang" to all subelements
 	}		
 }
 
 function makeExtension(model, addLang) {
 	var term = 'Extension';
 
-	try {	
-		outputWrite(0, "");
-		outputWrite(1, "<xsd:complexType name=\"" + getXSLName(term) + "\">");
-		addAnnotation(2, model.dictionary[term].definition);
-		outputWrite(2, "<xsd:sequence>");
-		outputWrite(3, "<xsd:any minOccurs=\"0\" maxOccurs=\"unbounded\" processContents=\"lax\" namespace=\"##other\" />");
-		outputWrite(2, "</xsd:sequence>");
-		if (addLang) {
-			outputWrite(3, "<xsd:attribute name=\"lang\" type=\"xsd:string\" default=\"en\"/>");
-		}
-		outputWrite(1, "</xsd:complexType>");
-	} catch(e) {
-		// "Extension" was introduced in 1.2.0 - Ignore error if 1.1.0
-		if(model.version.localeCompare("1.1.0") != 0) {
+	// "Extension" was introduced in 1.2.0 - Ignore error if 1.1.0
+	if(model.version.localeCompare("1.2.0") >= 0) {
+		try {	
+			outputWrite(0, "");
+			outputWrite(1, "<xsd:complexType name=\"" + getXSLName(term) + "\">");
+			addAnnotation(2, model.dictionary[term].definition);
+			outputWrite(2, "<xsd:sequence>");
+			outputWrite(3, "<xsd:any minOccurs=\"0\" maxOccurs=\"unbounded\" processContents=\"lax\" />");
+			outputWrite(2, "</xsd:sequence>");
+			if (addLang) {
+				outputWrite(3, "<xsd:attribute name=\"lang\" type=\"xsd:string\" default=\"en\"/>");
+			}
+			outputWrite(1, "</xsd:complexType>");
+		} catch(e) {
 			console.log("Processing term: " + term);
 			console.log(e.message);
 		}
