@@ -1,6 +1,6 @@
 {
   "name": "spase-model-tools",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Tools to generate information model PDF, JSON and XSD files.",
   "main": "index.js",
   "scripts": {
