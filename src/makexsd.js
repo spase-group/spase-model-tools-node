@@ -12,7 +12,7 @@ const lineByLine = require('n-readlines');
 const htmlEncode = require('js-htmlencode').htmlEncode;
 
 var options  = yargs
-	.version('1.0.1')
+	.version('1.0.2')
     .usage('Read information model specification file in JSON format and generate an XML schema document (XSD).')
 	.usage('$0 [args] <folder>')
 	.example('$0 -d example.json', 'Read the information model specification file "example.json"')
@@ -461,7 +461,7 @@ function makeLists(indent, model) {
 			outputWrite(indent, "<xsd:simpleType name=\"" + listName + "\">");
 			addAnnotation(indent + 1, model.list[key].definition);
 			outputWrite(indent, "<xsd:union");
-			makeEnumUnion(model.namespace + ":", model.list[key].reference);
+			makeEnumUnion(indent, model.namespace + ":", model.list[key].reference);
 			outputWrite(indent, "/>");
 			outputWrite(indent, "</xsd:simpleType>");
 		} else { // Closed
@@ -580,19 +580,25 @@ function makeEnum(indent, model, prefix, list) {
 /**
  * Create an enumeration list.
  **/
-function makeEnumUnion(prefix, list) {
+function makeEnumUnion(indent, prefix, list) {
 	var part = list.split(",");
 
-	enumList = "memberTypes=\"";
+console.log("makeEnumUnion");
+console.log("   prefix: " + prefix);
+console.log("   list: " + list);
+
+   var delim = "";
+	var enumList = "memberTypes=\"";
 	
 	for(var i = 0; i < part.length; i++) {
 		var p = part[i];
-		if(p.index(":") != -1) enumList += delim + p.trim();	// Namespace already defined
-		else enumList += delim + prefix + p.trim();
+		if(p.indexOf(":") == -1) enumList += delim + prefix + p.trim(); // No prefix - add namespace
+      else enumList += delim + p.trim();	// Namespace already defined
 		delim = " ";
 	}
 	enumList += "\"";
-	outputWrite(enumList);
+   console.log(enumList);
+	outputWrite(indent+1, enumList);
 }
 
 function getXSLName(term) {

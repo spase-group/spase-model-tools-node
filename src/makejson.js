@@ -11,7 +11,7 @@ const path = require('path');
 const lineByLine = require('n-readlines');
 
 var options  = yargs
-	.version('1.0.1')
+	.version('1.0.3')
     .usage('Read information model specification files and generate corresponding JSON files.')
 	.usage('$0 [args] <folder>')
 	.example('$0 example', 'Read the information model specification files in the folder "example"')
@@ -33,6 +33,14 @@ var options  = yargs
 		'h' : {
 			alias : 'help',
 			description: 'show information about the app.'
+		},
+		
+		// Also history
+		'a' : {
+			alias: 'history',
+			describe : 'Output history.json file.',
+			type: 'string',
+			default: null
 		},
 		
 		// Config
@@ -133,6 +141,14 @@ function now() {
 	return(today);
 }
 
+// Sort and object by key value
+function sortByKey(obj) {
+  return Object.keys(obj).sort().reduce(function (result, key) {
+    result[key] = obj[key];
+    return result;
+  }, {});
+}
+
 /** 
  * Write to output file if defined, otherwise to console.log()
  **/
@@ -159,6 +175,33 @@ function readConfig(pathname) {
 	return model;	
 }
 
+function readHistory(pathname) {
+	const liner = new lineByLine(pathname);
+
+	let line;
+	let lineNumber = 0;
+	var dictionary = [];
+	
+	while (line = liner.next()) {
+		lineNumber++;
+		if(lineNumber == 1) continue; // Skip first line which contains field names
+		var text = line.toString('ascii').replace("\r", "");  // Convert and remove CR is present
+		if(text.charAt(0) == '#') continue;	// comment 
+		var part = text.split("\t");	// Tab separated elements
+		if(part.length < 6) { console.log("History: Invalid record at line " + lineNumber); continue; }
+		var definition = {	"id": part[0], 
+							"version": part[1],
+							"updated": part[2],
+							"changedBy": part[3],
+							"description": part[4],
+							"note": part[5]
+						};
+		dictionary.push(definition);
+	}
+
+	return dictionary;	
+}
+
 function readType(pathname) {
 	const liner = new lineByLine(pathname);
 
@@ -169,7 +212,7 @@ function readType(pathname) {
 	while (line = liner.next()) {
 		lineNumber++;
 		if(lineNumber == 1) continue; // Skip first line which contains field names
-		var text = line.toString('ascii');
+		var text = line.toString('ascii').replace("\r", "");  // Convert and remove CR is present
 		if(text.charAt(0) == '#') continue;	// comment 
 		var part = text.split("\t");	// Tab separated elements
 		if(part.length < 4) { console.log("Type: Invalid record at line " + lineNumber); continue; }
@@ -194,7 +237,7 @@ function readDictionary(pathname) {
 	while (line = liner.next()) {
 		lineNumber++;
 		if(lineNumber == 1) continue; // Skip first line which contains field names
-		var text = line.toString('ascii');
+		var text = line.toString('ascii').replace("\r", "");  // Convert and remove CR is present
 		if(text.charAt(0) == '#') continue;	// comment 
 		var part = text.split("\t");	// Tab separated elements
 		if(part.length < 8) { console.log("Dictionary: Invalid record at line " + lineNumber); continue; }
@@ -223,7 +266,7 @@ function readList(pathname) {
 	while (line = liner.next()) {
 		lineNumber++;
 		if(lineNumber == 1) continue; // Skip first line which contains field names
-		var text = line.toString('ascii');
+		var text = line.toString('ascii').replace("\r", "");  // Convert and remove CR is present
 		if(text.charAt(0) == '#') continue;	// comment 
 		var part = text.split("\t");	// Tab separated elements
 		if(part.length < 6) { console.log("List: Invalid record at line " + lineNumber); continue; }
@@ -235,33 +278,6 @@ function readList(pathname) {
 							"definition": part[5]
 						};
 		dictionary[definition.name] = definition;
-	}
-
-	return dictionary;	
-}
-
-function readHistory(pathname) {
-	const liner = new lineByLine(pathname);
-
-	let line;
-	let lineNumber = 0;
-	var dictionary = [];
-	
-	while (line = liner.next()) {
-		lineNumber++;
-		if(lineNumber == 1) continue; // Skip first line which contains field names
-		var text = line.toString('ascii');
-		if(text.charAt(0) == '#') continue;	// comment 
-		var part = text.split("\t");	// Tab separated elements
-		if(part.length < 6) { console.log("History: Invalid record at line " + lineNumber); continue; }
-		var definition = {	"id": part[0], 
-							"version": part[1],
-							"updated": part[2],
-							"changedBy": part[3],
-							"description": part[4],
-							"note": part[5]
-						};
-		dictionary.push(definition);
 	}
 
 	return dictionary;	
@@ -279,7 +295,7 @@ function readMember(pathname) {
 	while (line = liner.next()) {
 		lineNumber++;
 		if(lineNumber == 1) continue; // Skip first line which contains field names
-		var text = line.toString('ascii');
+		var text = line.toString('ascii').replace("\r", "");  // Convert and remove CR is present
 		if(text.charAt(0) == '#') continue;	// comment 
 		var part = text.split("\t");	// Tab separated elements
 		if(part.length < 4) { console.log("Member: Invalid record at line " + lineNumber); continue; }
@@ -314,7 +330,7 @@ function readOntology(pathname) {
 	while (line = liner.next()) {
 		lineNumber++;
 		if(lineNumber == 1) continue; // Skip first line which contains field names
-		var text = line.toString('ascii');
+		var text = line.toString('ascii').replace("\r", "");  // Convert and remove CR is present
 		if(text.charAt(0) == '#') continue;	// comment 
 		var part = text.split("\t");	// Tab separated elements
 		if(part.length < 8) { console.log("Ontology: Invalid record at line " + lineNumber); continue; }
@@ -360,6 +376,34 @@ function buildEnumeration(dictionary, member, prefix, list) {
 		}
 	}
 	return names;
+}
+
+function buildListUnion(member, list) {
+	if( ! list) return member;
+	
+	var keys = Object.keys(list);
+	for (var i = 0; i < keys.length; i++) {
+		var term = keys[i];
+		if( list[term].type == 'Union') {   // Create member item from union
+			// console.log("List '" + term + "' is a union.");
+         // Add members in each list as members of this list
+         var items = {};
+         var part = list[term].reference.split(",");
+			for( var j = 0; j < part.length; j++) {
+				// console.log("    " + part[j]);
+          	var names = Object.keys(member[part[j]]);
+            for (var k = 0; k < names.length; k++) {
+               // console.log("        " + names[k]);
+               items[names[k]] = member[part[j]][names[k]];
+            }
+			}
+         //Sort items alphabetically by 
+         items = sortByKey(items);
+         member[term] = items;
+         list[term].type = "Closed";  // Change to "Closed" after doing union. Helps with docs.
+		}
+	}
+	return member;
 }
 
 /**
@@ -450,6 +494,7 @@ function main(args) {
 
 	// Read and parse history info
 	var history = readHistory("history.tab");
+   history.reverse();   // Newest first
 /*
 	console.log("#----- History ----")
 	console.log(JSON.stringify(history, null, 3));
@@ -467,6 +512,9 @@ function main(args) {
 	var terms = Object.keys(dictionary);
 	var ont = Object.keys(ontology);
 	
+   // Build lists that are unions of other lists
+   member = buildListUnion(member, list);
+   
 	// Build "usedBy" and "subElements" list
 	for (var i = 0; i < terms.length; i++) {
 		var term = terms[i];
@@ -488,7 +536,7 @@ function main(args) {
 		var term = terms[i];
 		dictionary[term].allowedValues = [];
 		if(dictionary[term].list.length > 0) {
-			if( ! member[dictionary[term].list]) {
+			if( ! member[dictionary[term].list] && ! list[dictionary[term].list]) {
 				console.log("Reference error: Term '" + term + "' refers to list '" + dictionary[term].list + "' which does not exist.");
 			} else {
 				dictionary[term].allowedValues = buildEnumeration(dictionary, member, "", member[dictionary[term].list]); // Object.keys(member[dictionary[term].list]);
@@ -502,7 +550,7 @@ function main(args) {
 		var items = Object.keys(member[terms[i]]);
 		for(var j = 0; j < items.length; j++) {
 			if( ! dictionary[items[j]]) {
-				console.log("Error in list '" + terms[i] + "' - member '" + items[j] +"' is not defined.");
+				console.log("Error in list '" + terms[i] + "' - member '" + items[j] +"' is not defined in dictionary.");
 			}
 		}
 	}
@@ -533,7 +581,15 @@ function main(args) {
 	model.member = member;
 	model.ontology = ontology;
 
-	outputWrite(0, JSON.stringify(model, null, 3));
+   if(options.history) {   // Write history
+   	var outFile = fs.createWriteStream(options.history);
+      outFile.write(JSON.stringify(history, null, 3));      
+      outFile.end(); 
+      outFile = null;
+   }
+   
+   // Write model
+   outputWrite(0, JSON.stringify(model, null, 3));
 	
 	outputEnd();
 
