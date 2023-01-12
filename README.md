@@ -9,7 +9,9 @@ A collection of command line tools for working with SPASE information model spec
 ## Tools
 
 **spase-model-xsd** : Generate the XML schema document to match the information model specification.
+
 **spase-model-json** : Generate the JSON data files to match the information model specification.
+
 **spase-model-pdf** : Generate PDF documentation for the information model.
 
 # Notes 
