@@ -152,7 +152,6 @@ function makeXSD(model) {
 	outputWrite(0, "	      xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"");
 	outputWrite(0, "	      xmlns:vc=\"http://www.w3.org/2007/XMLSchema-versioning\"");
 	outputWrite(0, "	      xmlns:rights=\"http://www.spase-group.org/data/schema\"");
-	outputWrite(0, "	      rights=\"Creative Commons Zero v1.0 Universal\"");
 	outputWrite(0, "	      xmlns:" + model.namespace + "=\"" + model.schemaurl + "\"");
 	outputWrite(0, "	      elementFormDefault=\"qualified\"");
 	outputWrite(0, "	      attributeFormDefault=\"unqualified\"");
