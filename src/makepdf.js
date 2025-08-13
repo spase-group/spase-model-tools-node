@@ -144,7 +144,8 @@ process.chdir(options.base);
 console.log("Current directory: " + process.cwd());
 
 // Initialize jsreport
-const jsreport = require('jsreport-core')({
+//const jsreport = require('jsreport-core')({
+const jsreport = require('@jsreport/jsreport-core')({
 	"allowLocalFilesAccess": true,
 	"rootDirectory": process.cwd(),
 	"template": {
@@ -175,6 +176,7 @@ const jsreport = require('jsreport-core')({
 });
 
 // Necessary modules
+/*
 jsreport.use(require('jsreport-handlebars')());
 jsreport.use(require('jsreport-chrome-pdf')());
 jsreport.use(require('jsreport-assets')());
@@ -182,6 +184,14 @@ jsreport.use(require('jsreport-templates')());
 jsreport.use(require('jsreport-child-templates')());
 jsreport.use(require('jsreport-pdf-utils')());
 jsreport.use(require('jsreport-scripts')());
+*/
+jsreport.use(require('@jsreport/jsreport-handlebars')());
+jsreport.use(require('@jsreport/jsreport-chrome-pdf')());
+jsreport.use(require('@jsreport/jsreport-assets')());
+//jsreport.use(require('@jsreport/jsreport-templates')());
+jsreport.use(require('@jsreport/jsreport-child-templates')());
+jsreport.use(require('@jsreport/jsreport-pdf-utils')());
+jsreport.use(require('@jsreport/jsreport-scripts')());
 
 // Load various pieces
 

@@ -251,17 +251,21 @@ function makeBranch(model, term, addLang) {
 		if( ! model.dictionary[member.element]) {
 			console.log("Definition of '" + member.element + "' missing from dictionary.");
 		}
+		console.log(model.dictionary[member.element]);
 		if(model.dictionary[member.element].type == 'Enumeration') {
 			type = model.dictionary[member.element].list;
 		}
 		var occur = "";
 		if(!inChoice) occur = " " + getXSLOccurrence(member.occurrence);
 
+		var fixed = ""; // 2025/08/13 Adding handling of fixed values
+		if (member.fixed_val.length > 0) fixed = getXSLFixed(member.fixed_val);
+
 		outputWrite(
 				3 + inc,
 				"<xsd:element name=\""	+ getXSLName(member.element) + "\""
 						   + " type=\""	+ model.namespace + ":" + getXSLName(type) + "\""	
-							+ occur
+							+ occur + fixed
 						   + " />"
 				);
 	}
@@ -665,4 +669,9 @@ function getXSLOccurrence(occur) {
 	if (occur, "*")				return "minOccurs=\"0\" maxOccurs=\"unbounded\""; // Any number
 
 	return ""; // Default
+}
+
+// Added 2025/08/13 - format fixed value
+function getXSLFixed(fixed) {
+  return ' fixed="' + fixed + '" ';
 }
