@@ -251,7 +251,7 @@ function makeBranch(model, term, addLang) {
 		if( ! model.dictionary[member.element]) {
 			console.log("Definition of '" + member.element + "' missing from dictionary.");
 		}
-		console.log(model.dictionary[member.element]);
+		
 		if(model.dictionary[member.element].type == 'Enumeration') {
 			type = model.dictionary[member.element].list;
 		}

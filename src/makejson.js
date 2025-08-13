@@ -341,7 +341,8 @@ function readOntology(pathname) {
 							"reference": parseInt(part[4]),
 							"occurrence": part[5],
 							"group": part[6],
-							"fixed_val": part[7]  // 2025/08/13 Hijacking the unused "Type" field to set fixed schema values
+							"type": part[7],
+							"fixed_val": part[8]  
 						};
 		if(currentObjectName != definition.object) {	// New object
 			if(currentObjectName.length != 0) { dictionary[currentObjectName] = currentObject; }
