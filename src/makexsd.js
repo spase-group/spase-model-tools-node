@@ -435,9 +435,28 @@ function makeLists(indent, model) {
 		outputWrite(indent, "<xsd:simpleType name=\"Version\">");
 		addAnnotation(indent + 1, "Version number.");
 		outputWrite(indent + 1, "<xsd:restriction base=\"xsd:string\">");
+		// hardcode all past versions of SPASE from 2.2.1 on
+		outputWrite(indent + 2, "<xsd:enumeration value=\"2.2.1\" />");
+		outputWrite(indent + 2, "<xsd:enumeration value=\"2.2.2\" />");
+		outputWrite(indent + 2, "<xsd:enumeration value=\"2.2.3\" />");
+		outputWrite(indent + 2, "<xsd:enumeration value=\"2.2.4\" />");
+		outputWrite(indent + 2, "<xsd:enumeration value=\"2.2.6\" />");
+		outputWrite(indent + 2, "<xsd:enumeration value=\"2.2.8\" />");
+		outputWrite(indent + 2, "<xsd:enumeration value=\"2.2.9\" />");
+		outputWrite(indent + 2, "<xsd:enumeration value=\"2.3.0\" />");
+		outputWrite(indent + 2, "<xsd:enumeration value=\"2.3.1\" />");
+		outputWrite(indent + 2, "<xsd:enumeration value=\"2.3.2\" />");
+		outputWrite(indent + 2, "<xsd:enumeration value=\"2.4.0\" />");
+		outputWrite(indent + 2, "<xsd:enumeration value=\"2.4.1\" />");
+		outputWrite(indent + 2, "<xsd:enumeration value=\"2.4.2\" />");
+		outputWrite(indent + 2, "<xsd:enumeration value=\"2.5.0\" />");
+		outputWrite(indent + 2, "<xsd:enumeration value=\"2.6.0\" />");
+		outputWrite(indent + 2, "<xsd:enumeration value=\"2.6.1\" />");
+		outputWrite(indent + 2, "<xsd:enumeration value=\"2.7.0\" />");
+		outputWrite(indent + 2, "<xsd:enumeration value=\"2.7.1\" />");
 		outputWrite(indent + 2, "<xsd:enumeration value=\"" + model.version + "\" />");
 		outputWrite(indent + 1, "</xsd:restriction>");
-		outputWrite(indent + 1, "</xsd:simpleType>");
+		outputWrite(indent, "</xsd:simpleType>");
 	}
 	
 	// Generate types for each list
